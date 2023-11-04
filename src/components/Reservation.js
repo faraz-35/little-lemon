@@ -1,19 +1,40 @@
+import React from "react";
 import {
   Box,
-  VStack,
-  Input,
-  Text,
   Heading,
+  VStack,
+  Text,
+  Input,
   Textarea,
   Button,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
+  HStack,
 } from "@chakra-ui/react";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
-function Reservation() {
+const validationSchema = Yup.object().shape({
+  firstName: Yup.string().required("First Name is required"),
+  lastName: Yup.string().required("Last Name is required"),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  phoneNumber: Yup.string().required("Phone Number is required"),
+  date: Yup.date().required("Date is required"),
+  time: Yup.string().required("Time is required"),
+  tableFor: Yup.number()
+    .typeError("Table for must be a number")
+    .required("Table for is required")
+    .integer("Table for must be an integer")
+    .min(1, "Table for must be at least 1"),
+});
+
+const ReservationForm = () => {
+  const handleSubmit = (values, { setSubmitting }) => {
+    // Handle form submission logic here
+    console.log(values);
+    setSubmitting(false);
+  };
+
   return (
     <Box
       width="100%"
@@ -29,57 +50,162 @@ function Reservation() {
         Reserve a Table
       </Heading>
 
-      <Box display="flex" alignItems="flex-start" gap="10px" color="white">
-        <VStack
-          display="flex"
-          alignItems="flex-start"
-          border="1px solid #EDEFEE"
-          borderRadius="10px"
-          padding="10px"
-        >
-          <Heading as="h3" size="lg" color="white">
-            Responsible Details
-          </Heading>
-          <Text>First Name*</Text>
-          <Input type="text" placeholder="First Name" size="md"></Input>
-          <Text>Last Name*</Text>
-          <Input type="text" placeholder="Last Name" size="md"></Input>
-          <Text>E-mail*</Text>
-          <Input type="text" placeholder="E-mail" size="md"></Input>
-          <Text>Phone Number*</Text>
-          <Input type="tel" placeholder="Phone Number" size="md"></Input>
-        </VStack>
+      <Formik
+        initialValues={{
+          firstName: "",
+          lastName: "",
+          email: "",
+          phoneNumber: "",
+          date: "",
+          time: "",
+          tableFor: 1,
+          specialRequests: "",
+        }}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ isSubmitting }) => (
+          <Form>
+            {/* Responsible Details */}
+            <Box
+              display="flex"
+              alignItems="flex-start"
+              gap="10px"
+              color="white"
+            >
+              <VStack
+                display="flex"
+                alignItems="flex-start"
+                border="1px solid #EDEFEE"
+                borderRadius="10px"
+                padding="10px"
+              >
+                <Heading as="h3" size="lg" color="white">
+                  Responsible Details
+                </Heading>
+                <Text>First Name*</Text>
+                <Field
+                  type="text"
+                  name="firstName"
+                  as={Input}
+                  placeholder="First Name"
+                  size="md"
+                />
+                <ErrorMessage
+                  name="firstName"
+                  component="div"
+                  style={{ color: "red" }}
+                />
+                <Text>Last Name*</Text>
+                <Field
+                  type="text"
+                  name="lastName"
+                  as={Input}
+                  placeholder="Last Name"
+                  size="md"
+                />
+                <ErrorMessage
+                  name="lastName"
+                  component="div"
+                  style={{ color: "red" }}
+                />
+                <Text>E-mail*</Text>
+                <Field
+                  type="text"
+                  name="email"
+                  as={Input}
+                  placeholder="E-mail"
+                  size="md"
+                />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  style={{ color: "red" }}
+                />
+                <Text>Phone Number*</Text>
+                <Field
+                  type="tel"
+                  name="phoneNumber"
+                  as={Input}
+                  placeholder="Phone Number"
+                  size="md"
+                />
+                <ErrorMessage
+                  name="phoneNumber"
+                  component="div"
+                  style={{ color: "red" }}
+                />
+              </VStack>
 
-        <VStack
-          display="flex"
-          alignItems="flex-start"
-          border="1px solid #EDEFEE"
-          borderRadius="10px"
-          padding="10px"
-        >
-          <Heading as="h2" size="lg" color="white">
-            Reservation Details
-          </Heading>
-          <Text>Date*</Text>
-          <Input type="date" placeholder="Date*" size="md"></Input>
-          <Text>Time*</Text>
-          <Input type="time" placeholder="Time*" size="md"></Input>
-          <Text>Table for*</Text>
-          <NumberInput>
-            <NumberInputField />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
-          <Text>Special Requests (optional)</Text>
-          <Textarea placeholder="Special Resquests (optional)"></Textarea>
-        </VStack>
-      </Box>
-
-      <Button bg="#F4CE14">Confirm Reservation</Button>
+              {/* Reservation Details */}
+              <VStack
+                display="flex"
+                alignItems="flex-start"
+                border="1px solid #EDEFEE"
+                borderRadius="10px"
+                padding="10px"
+              >
+                <Heading as="h2" size="lg" color="white">
+                  Reservation Details
+                </Heading>
+                <Text>Date*</Text>
+                <Field
+                  type="date"
+                  name="date"
+                  as={Input}
+                  placeholder="Date"
+                  size="md"
+                />
+                <ErrorMessage
+                  name="date"
+                  component="div"
+                  style={{ color: "red" }}
+                />
+                <Text>Time*</Text>
+                <Field
+                  type="time"
+                  name="time"
+                  as={Input}
+                  placeholder="Time"
+                  size="md"
+                />
+                <ErrorMessage
+                  name="time"
+                  component="div"
+                  style={{ color: "red" }}
+                />
+                <Text>Table for*</Text>
+                <Field
+                  type="number"
+                  name="tableFor"
+                  as={Input}
+                  placeholder="Table for"
+                  size="md"
+                />
+                <ErrorMessage
+                  name="tableFor"
+                  component="div"
+                  style={{ color: "red" }}
+                />
+                <Text>Special Requests (optional)</Text>
+                <Field
+                  type="text"
+                  name="specialRequests"
+                  as={Textarea}
+                  placeholder="Special Requests (optional)"
+                />
+              </VStack>
+            </Box>
+            <HStack display={"flex"} justifyContent="center" mt={6}>
+              <Button type="submit" bg="#F4CE14" isDisabled={isSubmitting}>
+                Confirm Reservation
+              </Button>
+            </HStack>
+          </Form>
+        )}
+      </Formik>
     </Box>
   );
-}
+};
 
-export default Reservation;
+export default ReservationForm;

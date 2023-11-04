@@ -1,5 +1,6 @@
 import { Box, VStack, Heading, Button, Image } from "@chakra-ui/react";
 import bannerPicture from "./img/banner-picture.png";
+import scrollToElement from "../Utils/ScrollToElement";
 
 function Banner() {
   return (
@@ -26,7 +27,14 @@ function Banner() {
           <br />
           focused on traditional recipes served with a modern twist.
         </Heading>
-        <Button bg="#F4CE14">Reserve a Table</Button>
+        <Button
+          bg="#F4CE14"
+          onClick={() => {
+            scrollToElement("reservation-section");
+          }}
+        >
+          Reserve a Table
+        </Button>
       </VStack>
       <Image
         boxSize="300px"
